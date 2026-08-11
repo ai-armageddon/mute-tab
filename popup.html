@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mute Tab</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Mute Tab</h1>
+
+    <button id="toggle" class="toggle" type="button">
+      <svg class="toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="speaker" d="M4.8 9.6h3.84L13.92 4.32v15.36L8.64 14.4H4.8z" />
+        <path class="wave" d="M14.95 7.18a7.2 7.2 0 0 1 0 9.64" />
+        <path class="wave" d="M16.56 5.74a9.36 9.36 0 0 1 0 12.53" />
+        <path class="slash-casing" d="M8.16 1.44 17.76 22.56" />
+        <path class="slash" d="M8.16 1.44 17.76 22.56" />
+      </svg>
+      <span class="toggle-text">
+        <strong id="toggleState">Loading&hellip;</strong>
+        <small id="toggleHost"></small>
+      </span>
+    </button>
+
+    <h2>Custom hotkey</h2>
+    <div class="row">
+      <button id="record" class="record" type="button">Click to record</button>
+      <button id="clear" class="link" type="button" hidden>Clear</button>
+    </div>
+    <p id="recordHint" class="hint">Works on normal web pages. Needs Ctrl, Alt or Cmd.</p>
+
+    <h2>Muted audio alert</h2>
+    <label class="check">
+      <input id="alertEnabled" type="checkbox" />
+      <span>Flash a red alert when this muted tab plays sound</span>
+    </label>
+    <label class="check">
+      <input id="cornerEnabled" type="checkbox" />
+      <span>Keep a small corner icon after dismissing</span>
+    </label>
+
+    <h2>Browser shortcut</h2>
+    <div class="row">
+      <span id="commandKeys" class="keys">Not set</span>
+      <button id="openShortcuts" class="link" type="button">Change</button>
+    </div>
+    <p class="hint">Works everywhere, including <code>chrome://</code> pages.</p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

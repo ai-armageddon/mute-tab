@@ -1,0 +1,190 @@
+:root {
+  color-scheme: dark;
+  --card: #16181c;
+}
+
+body {
+  width: 280px;
+  margin: 0;
+  padding: 16px;
+  background: #0f1115;
+  color: #e7e9ea;
+  font: 14px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+h2 {
+  margin: 18px 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #71767b;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid #2f3336;
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.toggle:hover { --card: #1d2026; }
+
+.toggle-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+.toggle-icon .speaker { fill: currentColor; }
+
+.toggle-icon .wave,
+.toggle-icon .slash,
+.toggle-icon .slash-casing {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.toggle-icon .wave {
+  stroke: currentColor;
+  stroke-width: 1.34;
+}
+
+.toggle-icon .slash {
+  stroke: currentColor;
+  stroke-width: 2.02;
+}
+
+/* Matches the card so the slash reads as a gap cut out of the glyph. */
+.toggle-icon .slash-casing {
+  stroke: var(--card);
+  stroke-width: 3.17;
+}
+
+.toggle:not(.is-muted) .slash,
+.toggle:not(.is-muted) .slash-casing { display: none; }
+
+.toggle.is-muted { border-color: #ef4444; }
+.toggle.is-muted .toggle-icon { color: #ef4444; }
+
+.toggle-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.toggle-text strong { font-size: 14px; }
+
+.toggle-text small {
+  color: #71767b;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.record {
+  flex: 1;
+  padding: 8px 10px;
+  background: #16181c;
+  border: 1px solid #2f3336;
+  border-radius: 8px;
+  color: #e7e9ea;
+  font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-align: left;
+  cursor: pointer;
+}
+
+.record:hover { border-color: #4b5259; }
+
+.record.is-recording {
+  border-color: #4c8dff;
+  color: #4c8dff;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.keys {
+  flex: 1;
+  padding: 8px 10px;
+  background: #16181c;
+  border: 1px solid #2f3336;
+  border-radius: 8px;
+  font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #fff;
+}
+
+.keys.is-unset {
+  color: #71767b;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 8px;
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+  margin: 2px 0 0;
+  accent-color: #ef4444;
+  cursor: pointer;
+}
+
+.check span { font-size: 13px; }
+
+.check:has(input:disabled) {
+  color: #71767b;
+  cursor: default;
+}
+
+.link {
+  flex: none;
+  padding: 4px 2px;
+  background: none;
+  border: 0;
+  color: #4c8dff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.link:hover { text-decoration: underline; }
+
+.hint {
+  margin: 8px 0 0;
+  color: #71767b;
+  font-size: 12px;
+}
+
+.hint.is-error { color: #ef4444; }
+
+code {
+  font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #9aa0a6;
+}
