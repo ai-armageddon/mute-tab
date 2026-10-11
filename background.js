@@ -1,20 +1,6 @@
 // Mute Tab - service worker.
-// Owns the muting itself plus the per-tab toolbar icon, so the popup, the
+// Owns the muting itself plus the per-tab toolbar badge, so the popup, the
 // Chrome command and the in-page hotkey all funnel through the same code.
-
-const ICON_ON = {
-  16: 'icons/icon16.png',
-  32: 'icons/icon32.png',
-  48: 'icons/icon48.png',
-  128: 'icons/icon128.png'
-};
-
-const ICON_MUTED = {
-  16: 'icons/muted16.png',
-  32: 'icons/muted32.png',
-  48: 'icons/muted48.png',
-  128: 'icons/muted128.png'
-};
 
 function isMuted(tab) {
   return Boolean(tab && tab.mutedInfo && tab.mutedInfo.muted);
@@ -41,7 +27,6 @@ async function paint(tab) {
   if (!tab || typeof tab.id !== 'number' || tab.id === chrome.tabs.TAB_ID_NONE) return;
   const muted = isMuted(tab);
   try {
-    await chrome.action.setIcon({ tabId: tab.id, path: muted ? ICON_MUTED : ICON_ON });
     await chrome.action.setTitle({
       tabId: tab.id,
       title: muted ? 'Mute Tab \u2014 this tab is muted' : 'Mute Tab \u2014 this tab is not muted'

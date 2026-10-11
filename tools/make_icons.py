@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render the Mute Tab toolbar icons.
 
-Draws a speaker glyph (plus sound waves, or a cancellation slash) into
+Draws a red speaker glyph with sound waves and a cancellation slash into
 supersampled RGBA buffers and writes them out as PNGs. No third party
 dependencies so the icons can be regenerated anywhere.
 
@@ -13,7 +13,6 @@ import os
 import struct
 import zlib
 
-BLUE = (0x4C, 0x8D, 0xFF)
 RED = (0xEF, 0x44, 0x44)
 
 # All geometry is in a 0..1 square, y pointing down.
@@ -77,27 +76,21 @@ def in_arc(x, y, radius):
     return False
 
 
-def sample(x, y, muted):
-    """Return the colour at a point, or None for transparent.
-
-    Both states share the same speaker-and-waves silhouette so the toolbar
-    icon reads as one glyph toggling, not two unrelated pictures.
-    """
-    color = RED if muted else BLUE
-    if muted:
-        if in_capsule(x, y, SLASH, SLASH_RADIUS):
-            return color
-        # Transparent gap so the slash stays readable over the glyph.
-        if in_capsule(x, y, SLASH, SLASH_GAP):
-            return None
+def sample(x, y):
+    """Return the colour at a point, or None for transparent."""
+    if in_capsule(x, y, SLASH, SLASH_RADIUS):
+        return RED
+    # Transparent gap so the slash stays readable over the glyph.
+    if in_capsule(x, y, SLASH, SLASH_GAP):
+        return None
     if in_box(x, y, SPEAKER_BOX) or in_polygon(x, y, SPEAKER_CONE):
-        return color
+        return RED
     if any(in_arc(x, y, radius) for radius in WAVE_RADII):
-        return color
+        return RED
     return None
 
 
-def render(size, supersample, muted):
+def render(size, supersample):
     rows = []
     total = supersample * supersample
     step = 1.0 / (size * supersample)
@@ -110,7 +103,7 @@ def render(size, supersample, muted):
                 y = (py * supersample + sy + 0.5) * step
                 for sx in range(supersample):
                     x = (px * supersample + sx + 0.5) * step
-                    color = sample(x, y, muted)
+                    color = sample(x, y)
                     if color is None:
                         continue
                     r += color[0]
@@ -144,11 +137,10 @@ def write_png(path, size, rows):
 def main():
     out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, 'icons')
     os.makedirs(out_dir, exist_ok=True)
-    for prefix, muted in (('icon', False), ('muted', True)):
-        for size, supersample in SIZES.items():
-            path = os.path.join(out_dir, f'{prefix}{size}.png')
-            write_png(path, size, render(size, supersample, muted))
-            print('wrote', os.path.relpath(path, os.getcwd()))
+    for size, supersample in SIZES.items():
+        path = os.path.join(out_dir, f'icon{size}.png')
+        write_png(path, size, render(size, supersample))
+        print('wrote', os.path.relpath(path, os.getcwd()))
 
 
 if __name__ == '__main__':

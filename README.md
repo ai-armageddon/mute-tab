@@ -80,15 +80,15 @@ popup has a **Change** button that opens it. The two page-level shortcuts are
 recorded in the popup and handled by content scripts, which is why protected
 pages use the single-combination browser fallback.
 
-Every route calls the same service-worker logic, so the toolbar icon and badge
-stay in sync no matter which one you use.
+Every route calls the same service-worker logic, so the toolbar badge stays in
+sync no matter which one you use.
 
 ## How it behaves
 
 - **Mutes at the tab level.** Uses `chrome.tabs.update({ muted })` rather than
   hunting for media elements, so nothing in the tab can slip through.
-- **Shows state in the toolbar.** The icon turns into a red slashed speaker and
-  picks up an `OFF` badge. Chrome resets per-tab icons on navigation, so it is
+- **Shows state in the toolbar.** The red slashed-speaker icon picks up an `OFF`
+  badge on muted tabs. Chrome resets per-tab badges on navigation, so it is
   repainted whenever a tab finishes loading.
 - **Fires even while you're typing.** Chrome's command shortcuts work with focus
   in a text field, and the custom hotkey matches that. It is also why a Ctrl, Alt,
@@ -130,7 +130,7 @@ include Ctrl, Alt, or Cmd so it cannot collide with normal typing.
 | `content.js` | Listens for the recorded hotkey and draws the muted-audio alert |
 | `global-menu.js` | Listens for the two-step chord and draws the searchable in-page command palette |
 | `popup.html` / `popup.css` / `popup.js` | Mute controls, hotkey recorders, site search, alert settings, and browser shortcuts |
-| `icons/*.png` | Speaker (`icon*.png`) and muted speaker (`muted*.png`) at 16 / 32 / 48 / 128 |
+| `icons/*.png` | Red muted-speaker icon at 16 / 32 / 48 / 128 |
 | `tools/make_icons.py` | Renders the icon PNGs |
 | `screenshots/*.png` | The images in this README |
 
