@@ -22,12 +22,29 @@
       </span>
     </button>
 
-    <h2>Custom hotkey</h2>
+    <h2>Quick mute hotkey</h2>
     <div class="row">
       <button id="record" class="record" type="button">Click to record</button>
       <button id="clear" class="link" type="button" hidden>Clear</button>
     </div>
     <p id="recordHint" class="hint">Works on normal web pages. Needs Ctrl, Alt or Cmd.</p>
+
+    <h2>Global menu hotkey</h2>
+    <div class="row">
+      <button id="menuRecord" class="record" type="button">Loading&hellip;</button>
+      <button id="menuReset" class="link" type="button">Reset</button>
+    </div>
+    <p id="menuHint" class="hint">Press the first combo, release it, then press the second.</p>
+
+    <h2>All open tabs</h2>
+    <p id="globalStats" class="stats">Loading tabs&hellip;</p>
+    <div class="global-actions">
+      <button type="button" data-global-action="mute-audible">Mute audible</button>
+      <button type="button" data-global-action="unmute-all">Unmute all</button>
+    </div>
+    <input id="siteSearch" class="site-search" type="search" placeholder="Search sites, like facebook&hellip;" autocomplete="off" />
+    <div id="siteResults" class="site-results"></div>
+    <p id="globalFeedback" class="hint" aria-live="polite"></p>
 
     <h2>Muted audio alert</h2>
     <label class="check">
@@ -40,11 +57,18 @@
     </label>
 
     <h2>Browser shortcut</h2>
-    <div class="row">
+    <div class="shortcut-row">
+      <span>Quick mute</span>
       <span id="commandKeys" class="keys">Not set</span>
+    </div>
+    <div class="shortcut-row">
+      <span>Global menu</span>
+      <span id="menuCommandKeys" class="keys">Not set</span>
+    </div>
+    <div class="row change-row">
+      <span class="hint">Works on protected pages too.</span>
       <button id="openShortcuts" class="link" type="button">Change</button>
     </div>
-    <p class="hint">Works everywhere, including <code>chrome://</code> pages.</p>
 
     <script src="popup.js"></script>
   </body>

@@ -4,13 +4,13 @@
 </h1>
 
 <p align="center">
-  <b>Silence everything in the current tab with one keystroke.</b><br>
-  Press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd> to toggle mute, or record your own combination.
+  <b>Silence one tab—or every matching open tab—from the keyboard.</b><br>
+  Press <kbd>Ctrl+M</kbd>, then <kbd>Ctrl+K</kbd> to open the global menu.
 </p>
 
 <p align="center">
   <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-000000">
-  <img alt="Permissions" src="https://img.shields.io/badge/permissions-storage%20%2B%20activeTab-2ea44f">
+  <img alt="Permissions" src="https://img.shields.io/badge/permissions-storage%20%2B%20tabs-2ea44f">
 </p>
 
 ---
@@ -43,23 +43,45 @@ one case where it matters — an ad or autoplay video starting mid-sentence. Thi
 makes it a keystroke, and mutes at the browser level so it catches *everything*
 in the tab: `<video>`, `<audio>`, Web Audio, and audio inside cross-origin iframes.
 
-## Two hotkeys, on purpose
+## Global menu
 
-| | Browser shortcut | Custom hotkey |
-| --- | --- | --- |
-| Default | <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd> | none until you record one |
-| Set from | `chrome://extensions/shortcuts` | the extension popup |
-| Works on `chrome://` pages, the PDF viewer, the new tab page | yes | no |
-| Needs the page to have focus | no | yes |
+The command palette works from any regular web tab. Its default two-step chord
+is <kbd>Ctrl+M</kbd>, then <kbd>Ctrl+K</kbd>. Open the extension popup to record
+any other two combinations. On macOS this deliberately uses Control: the system
+reserves <kbd>⌘M</kbd> for Minimize, so Chrome never passes that combination to
+an extension.
 
-Chrome does not let an extension assign its own global shortcut, so the browser
-shortcut can only be rebound on Chrome's own shortcuts page — the popup has a
-**Change** button that opens it. The custom hotkey fills the gap: it is recorded
-in the popup and handled by a content script, which is why it cannot reach
-`chrome://` pages.
+From the menu you can:
 
-Both routes call the same code, so the toolbar icon and badge stay in sync no
-matter which one you use.
+- mute or unmute the current tab;
+- mute every tab that is currently audible;
+- unmute every open tab;
+- mute or unmute every tab from one site; or
+- type a term such as `facebook` and mute every open tab whose site or title
+  matches it.
+
+Use the arrow keys and Enter to run an action, or click one. The sequence must be
+completed within 1.8 seconds. Chrome's browser shortcut for the menu defaults to
+<kbd>Alt+Shift+K</kbd>; it opens the toolbar popup as a fallback on protected
+pages such as `chrome://` pages, where Chrome does not permit an in-page menu.
+
+## Three shortcuts, on purpose
+
+| | Quick browser mute | Quick page mute | Global menu chord |
+| --- | --- | --- | --- |
+| Default | <kbd>Alt+Shift+M</kbd> | none | <kbd>Ctrl+M</kbd>, then <kbd>Ctrl+K</kbd> |
+| Set from | `chrome://extensions/shortcuts` | extension popup | extension popup |
+| Works on protected pages | yes | no | use the <kbd>Alt+Shift+K</kbd> browser fallback |
+| Needs page focus | no | yes | yes |
+
+Chrome only supports one key combination per browser command, not two-step
+chords. Browser shortcuts can only be rebound on Chrome's own shortcuts page—the
+popup has a **Change** button that opens it. The two page-level shortcuts are
+recorded in the popup and handled by content scripts, which is why protected
+pages use the single-combination browser fallback.
+
+Every route calls the same service-worker logic, so the toolbar icon and badge
+stay in sync no matter which one you use.
 
 ## How it behaves
 
@@ -76,15 +98,16 @@ matter which one you use.
   phase and in every frame, so it fires before page-level handlers.
 - **Survives navigation and restarts.** Mute state lives on the tab itself, so
   there is nothing to persist and nothing to get out of sync.
-- **Requires no host permissions.** Tab muting needs none, and `activeTab` covers
-  reading the hostname shown in the popup.
+- **Groups open tabs by site.** The `tabs` permission lets the global menu read
+  open tab URLs and titles locally so it can find matching tabs. Nothing is sent
+  anywhere.
 - **Warns when a muted tab plays sound.** Chrome keeps a tab's `audible` flag on
   while a muted tab is still trying to play, so the page gets a red tint and a
   flashing mute banner with **Unmute** and **Dismiss** buttons. Dismissing
   collapses it to a small flashing icon in the top-right corner (click it to
   unmute). Both the alert and the corner icon can be turned off in the popup.
 
-Muting is manual only — nothing is auto-muted and no per-site rules are stored.
+Muting is manual only—nothing is auto-muted and no per-site rules are stored.
 
 ## Install
 
@@ -94,18 +117,19 @@ Muting is manual only — nothing is auto-muted and no per-site rules are stored
 4. Click **Load unpacked** and select the project folder
 5. Reload any tabs you had open, so the custom hotkey works there too
 
-The browser shortcut is active immediately. To record a custom hotkey, click the
-toolbar icon, click the hotkey field, and press your combination — it must include
-Ctrl, Alt, or Cmd so it cannot collide with normal typing.
+The browser shortcuts are active immediately. To record a page hotkey, click the
+toolbar icon, click its hotkey field, and press your combination. Every step must
+include Ctrl, Alt, or Cmd so it cannot collide with normal typing.
 
 ## Project layout
 
 | File | Purpose |
 | --- | --- |
-| `manifest.json` | MV3 manifest — the `toggle-mute` command, content script, `storage` + `activeTab` |
-| `background.js` | Service worker: the mute logic, toolbar icon, badge, tooltip, and muted-audio detection |
+| `manifest.json` | MV3 manifest—the two browser commands, content scripts, and `storage` + `tabs` permissions |
+| `background.js` | Service worker: single-tab and bulk mute logic, site matching, toolbar state, and command routing |
 | `content.js` | Listens for the recorded hotkey and draws the muted-audio alert |
-| `popup.html` / `popup.css` / `popup.js` | Mute toggle, hotkey recorder, alert settings, link to Chrome's shortcuts page |
+| `global-menu.js` | Listens for the two-step chord and draws the searchable in-page command palette |
+| `popup.html` / `popup.css` / `popup.js` | Mute controls, hotkey recorders, site search, alert settings, and browser shortcuts |
 | `icons/*.png` | Speaker (`icon*.png`) and muted speaker (`muted*.png`) at 16 / 32 / 48 / 128 |
 | `tools/make_icons.py` | Renders the icon PNGs |
 | `screenshots/*.png` | The images in this README |
@@ -124,11 +148,10 @@ slash runs parallel to the speaker cone's edges and dissolves the silhouette at
 ## A note on the permission warning
 
 Chrome will warn that this extension can "read and change all your data on all
-websites." That comes from the `<all_urls>` content script, which only listens
-for the recorded key combination and draws the muted-audio alert — it reads no
-page content and makes no network calls. Delete the `content_scripts` block from
-`manifest.json` if you would rather use only the browser shortcut; everything
-else keeps working, minus the alert.
+websites." That comes from the `<all_urls>` content scripts, which listen for
+recorded key combinations and draw the mute UI—they make no network calls. The
+`tabs` permission also lets the menu read open tab URLs and titles for local
+matching.
 
 ## Compatibility
 
